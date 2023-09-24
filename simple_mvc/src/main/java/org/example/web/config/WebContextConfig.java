@@ -1,6 +1,5 @@
 package org.example.web.config;
 
-import org.example.app.services.IdProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -45,11 +44,6 @@ public class WebContextConfig implements WebMvcConfigurer {
         viewResolver.setOrder(1);
 
         return viewResolver;
-    }
-
-    @Bean
-    public IdProvider idProvider() {
-        return new IdProvider();
     }
 
 }
