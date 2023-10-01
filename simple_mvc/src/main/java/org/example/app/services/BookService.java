@@ -20,7 +20,7 @@ public class BookService {
     }
 
     public List<Book> getAllBooks() {
-        return bookRepo.retreiveAll();
+        return bookRepo.retrieveAll();
     }
 
     public void saveBook(Book book) {
@@ -30,7 +30,7 @@ public class BookService {
         }
     }
 
-    public boolean removeBookById(String bookIdToRemove) {
+    public boolean removeBookById(Integer bookIdToRemove) {
         return bookRepo.removeItemById(bookIdToRemove);
     }
 
