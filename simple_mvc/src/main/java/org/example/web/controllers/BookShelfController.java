@@ -1,24 +1,25 @@
 package org.example.web.controllers;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.apache.log4j.Logger;
 import org.example.app.services.BookService;
 import org.example.web.dto.Book;
 import org.example.web.dto.BookIdToRemove;
+import org.example.web.dto.RegexToRemove;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.regex.PatternSyntaxException;
 
 
 @Controller
@@ -38,6 +39,7 @@ public class BookShelfController {
         logger.info(this.toString());
         model.addAttribute("book", new Book());
         model.addAttribute("bookIdToRemove", new BookIdToRemove());
+        model.addAttribute("regexToRemove", new RegexToRemove());
         model.addAttribute("bookList", bookService.getAllBooks());
         return "book_shelf";
     }
@@ -47,6 +49,7 @@ public class BookShelfController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("book", book);
             model.addAttribute("bookIdToRemove", new BookIdToRemove());
+            model.addAttribute("regexToRemove", new RegexToRemove());
             model.addAttribute("bookList", bookService.getAllBooks());
             return "book_shelf";
         } else {
@@ -60,10 +63,25 @@ public class BookShelfController {
     public String removeBook(@Valid BookIdToRemove bookIdToRemove, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("book", new Book());
+            model.addAttribute("regexToRemove", new RegexToRemove());
             model.addAttribute("bookList", bookService.getAllBooks());
             return "book_shelf";
         } else {
             bookService.removeBookById(bookIdToRemove.getId());
+            return "redirect:/books/shelf";
+        }
+    }
+
+    @PostMapping("/remove_by_regex")
+    public String removeByRegex(@Valid RegexToRemove regexToRemove, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("book", new Book());
+            model.addAttribute("bookIdToRemove", new BookIdToRemove());
+            model.addAttribute("bookList", bookService.getAllBooks());
+            return "book_shelf";
+        } else {
+            bookService.removeBookByRegex(regexToRemove.getRegex());
             return "redirect:/books/shelf";
         }
     }
@@ -76,7 +94,7 @@ public class BookShelfController {
         //create dir
         String rootPath = System.getProperty("catalina.home");
         File dir = new File(rootPath + File.separator + "external_uploads");
-        if (!dir.exists()){
+        if (!dir.exists()) {
             dir.mkdirs();
         }
 
@@ -91,12 +109,17 @@ public class BookShelfController {
         return "redirect:/books/shelf";
     }
 
-//    @PostMapping("/removeByRegex")
-//    public String removeByRegex(@RequestParam(value = "regexToRemove") String regexToRemove){
-//        if (bookService.removeBookByRegex(regexToRemove)) {
-//            return "redirect:/books/shelf";
-//        } else {
-//            return "redirect:/books/shelf";
-//        }
-//    }
+    @ExceptionHandler(FileNotFoundException.class)
+    public String handleFileNotFoundError(Model model, FileNotFoundException e) {
+        model.addAttribute("errorMessage", e.getMessage());
+
+        return "errors/file_not_chosen";
+    }
+
+    @ExceptionHandler(PatternSyntaxException.class)
+    public String handlePatternSyntaxError(Model model, PatternSyntaxException e) {
+        model.addAttribute("errorMessage", e.getMessage());
+
+        return "errors/regex_exception";
+    }
 }

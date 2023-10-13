@@ -1,5 +1,6 @@
 package org.example.web.dto;
 
+
 public class LoginForm {
 
     private String username;

@@ -1,1 +1,10 @@
-INSERT INTO books(author, title, size) VALUES ('Dostoevsky','Idiot',350);
+INSERT INTO books(author, title, size) VALUES ('Dostoevsky','Idiot',350),
+                                              ('Pushkin','Dom',115),
+                                              ('Turgenev','Kot v sapogah',200),
+                                              ('Esenin','Proza',55),
+                                              ('Dostoevsky','Gnom',328),
+                                              ('Tolstoy','Anna Karenina',95),
+                                              ('Petrov','Economy',65),
+                                              ('Darvin','Evolution',990),
+                                              ('Trotsko','Babki',456),
+                                              ('Kuritsin','Kinematograf',38);

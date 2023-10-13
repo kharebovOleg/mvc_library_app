@@ -1,12 +1,19 @@
 package org.example.web.dto;
 
-import javax.validation.constraints.Digits;
+import javax.validation.constraints.*;
 
 public class Book {
     private Integer id;
+    @NotEmpty(message = "field must not be empty")
+    @Pattern
+            (regexp = "^[а-яА-ЯёЁa-zA-Z'-]+ ?[а-яА-ЯёЁa-zA-Z'-]+ ?[а-яА-ЯёЁa-zA-Z'-]+$",
+            message = "field must be valid")
     private String author;
+    @NotEmpty
     private String title;
     @Digits(integer = 4, fraction = 0)
+    @Min(value = 5)
+    @NotNull
     private Integer size;
 
     public Integer getId() {

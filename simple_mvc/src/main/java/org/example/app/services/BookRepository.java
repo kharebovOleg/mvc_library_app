@@ -62,12 +62,18 @@ public class BookRepository implements ProjectRepository<Book>, ApplicationConte
 
     @Override
     public boolean removeItemByRegex(String regex) {
-//        List<Book> filteredBooks = repo.stream()
-//                .filter(book -> book.getAuthor().matches(regex) ||
-//                        book.getTitle().matches(regex) ||
-//                        String.valueOf(book.getSize()).matches(regex))
-//                .toList();
-//        return repo.removeAll(filteredBooks);
+        List<Book> filteredBooks = retrieveAll().stream()
+                    .filter(book -> book.getAuthor().matches(regex) ||
+                            book.getTitle().matches(regex) ||
+                            String.valueOf(book.getSize()).matches(regex))
+                    .toList();
+        if (filteredBooks.isEmpty()) {
+            return false;
+        }
+        for (Book book :
+                filteredBooks) {
+            removeItemById(book.getId());
+        }
         return true;
     }
 
@@ -76,11 +82,11 @@ public class BookRepository implements ProjectRepository<Book>, ApplicationConte
         this.context = applicationContext;
     }
 
-    private void defaultInit(){
+    private void defaultInit() {
         logger.info("default Init in book repo");
     }
 
-    private void defaultDestroy(){
+    private void defaultDestroy() {
         logger.info("default Destroy in book repo");
     }
 }
